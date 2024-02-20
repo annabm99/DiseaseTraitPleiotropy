@@ -29,7 +29,7 @@ echo "file number is $SLURM_ARRAY_TASK_ID"
 echo "input file is $INPUT_FILE"
 
 # Grab phenotype name
-NAME=$(echo $INPUT_FILE | cut -d "/" -f11 | cut -d "-" -f1)
+NAME=$(echo $INPUT_FILE | cut -d "/" -f10 | cut -d "-" -f1)
 
 echo "Name is $NAME"
 

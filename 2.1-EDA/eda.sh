@@ -14,6 +14,9 @@ echo "____ EDA.SH RUNNING ____"
 
 module load Python/3.6.6-foss-2018b
 
+# Activate virtual environment
+source /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/eda/EDA/bin/activate
+
 # Load variables
 SUMSTATS_LIST=$1
 OUTPUT_DIR=$2

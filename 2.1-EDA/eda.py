@@ -1,8 +1,6 @@
 
 print ("____ PYTHON RUNNING ____")
 
-source EDA
-
 import sys
 import pandas as pd
 import gwaslab as gl
