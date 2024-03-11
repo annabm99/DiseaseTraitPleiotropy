@@ -1,0 +1,3 @@
+FILE	TYPE	SPREV	PPREV	NAME
+/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/1-LDSC/1-munge/outputs/BMI_t_b-munge.gz	quantitative	nan	nan	BMI_t
+/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/1-LDSC/1-munge/outputs/STR_d-munge.gz	binary	0.0909	0.015

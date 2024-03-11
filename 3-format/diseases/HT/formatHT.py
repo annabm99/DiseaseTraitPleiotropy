@@ -24,25 +24,15 @@ print(f"Original columns: \n + {sumstats.iloc[:2]}")
 sumstats = sumstats[sumstats["rs_id_all"].str.startswith('rs')]
 sumstats["rs_id_all"] = sumstats["rs_id_all"].str.split(":").str[0]
 
-### STEP 2: Compute the Z score (Beta/SE) because these summary statistics do not give this value in the sumstats
-print("... Computing Z scores from Beta ...")
-    # Convert log(OR) and SE columns to numeric
-sumstats["beta"] = pd.to_numeric(sumstats['beta'], errors="coerce")
-sumstats["standard_error"] = pd.to_numeric(sumstats['standard_error'], errors="coerce")
-    # Compute Z score (new column)
-sumstats["Z"] = sumstats['beta']/sumstats['standard_error']
-
-print(sumstats.iloc[:2])
-
-### STEP 3: Grab interest columns for LDSC and rename
+### STEP 2: Grab interest columns for LDSC and rename
 print ('... Extracting interest columns ...')
-sumstats = sumstats[["chromosome", "base_pair_location", "rs_id_all", "effect_allele", "other_allele", "p_value", "all_total", "Z"]]
+sumstats = sumstats[["rs_id_all", "effect_allele", "other_allele", "p_value", "all_total", "beta", "standard_error"]]
 
 print(sumstats.iloc[:2])
 
-# Note: BETA is based on the effect allele, which will be assigned as A1
+# STEP 3: Rename columns so LDSC can understand the input
 print('... Renaming columns ....')
-sumstats.columns=["CHR", "BP", "SNP", "A1", "A2", "PVAL", "N", "Z"]
+sumstats.columns=["SNP", "A1", "A2", "PVAL", "N", "BETA", "SE_BETA"]
 
 print(sumstats.iloc[:2])
 

@@ -5,15 +5,13 @@ print (" ____ PYTHON RUNNING ___")
 # Libraries
 import sys
 import pandas as pd
+import numpy
+from scipy.stats import norm
 
 InputPath = sys.argv[1].rstrip()
 print(f"Input path is {InputPath}")
-MergeFile = sys.argv[2].rstrip()
-print(f"Merge file is {MergeFile}")
-OutputDir = sys.argv[3].rstrip()
+OutputDir = sys.argv[2].rstrip()
 print(f"Output directory is {OutputDir}")
-
-N = 69033 # total N of the experiment
 
 print ("... Inputs loaded ...")
 
@@ -23,43 +21,50 @@ PhenName = FileName.split(".")[0] # First part of the file name
 print ("File name: " + FileName + "\nPhenotype: " + PhenName)
 
 sumstats = pd.read_csv(InputPath, sep="\t", index_col=False, error_bad_lines=False, low_memory=False)
-variantsMerge = pd.read_csv(MergeFile, sep="\t", compression="gzip", index_col=False, error_bad_lines=False, low_memory=False)
 
 print(f"Original columns: \n + {sumstats.iloc[:2]}")
 
-## STEP 1: MERGE WITH VARIANTS FILE
-# 1.1. Remove unwanted part of the variant column in merge file (after :)
-# Assign this to a new column with the same name as in sumstats dataframe
-print("... Merging with variants file ...")
-variantsMerge["SNP"] = variantsMerge["variant"].str.rsplit(":", 2).str[0]
-print(variantsMerge.iloc[:2])
-# 1.2. Merge with sumstats
-sumstats= sumstats.merge(variantsMerge, on='SNP')
 
-print(sumstats.iloc[:2])
+## STEP 1: CALCULATE N_TOTAL
+print("... Calculating N_total for each SNP ...")
+    # Convert both N columns to numeric
+sumstats["N_CASES"] = pd.to_numeric(sumstats['N_CASES'], errors="coerce")
+sumstats["N_CONTROLS"] = pd.to_numeric(sumstats['N_CONTROLS'], errors="coerce")
+    # Calculate N total to new column
+sumstats[["N_TOTAL"]] = sumstats["N_CASES"] + sumstats["N_CONTROLS"]
 
-## STEP 2: Add a new column with N_total
-print("... Adding N_total column ...")
-sumstats["N_total"] = N
+## STEP 2: Compute the Z score (LOGOR/SE) because these summary statistics do not give this value in the sumstats
+# Note: beta is based on the risk allele, which will be assigned as A1
+# Note: we don't have the standard error (SE), so it will be calculated from the confidence limit (CL = logOR-logORL95) because CL = SE * 1.96
 
-## STEP 3: Compute the Z score (BETA/SE) because these summary statistics do not give this value in the sumstats
-# Note: beta is based on the effect allele (EA), which will be assigned as A1
-print("... Computing Z scores from beta ...")
-    # Convert log(OR) and SE columns to numeric
-sumstats["Beta"] = pd.to_numeric(sumstats["Beta"], errors="coerce")
-sumstats["SE"] = pd.to_numeric(sumstats["SE"], errors="coerce")
-    # Compute Z score (new column)
-sumstats["Z"] = sumstats['Beta']/sumstats['SE']
+    # Convert OR  columns to numeric
+# sumstats["OR"] = pd.to_numeric(sumstats["OR"], errors="coerce")
+# sumstats["OR_95L"] = pd.to_numeric(sumstats["OR_95L"], errors="coerce")
+    # Calculate logarithms
+# sumstats["logOR"] = numpy.log(sumstats["OR"])
+# sumstats["logOR_95L"] = numpy.log(sumstats["OR_95L"])
 
-print(sumstats.iloc[:2])
+    # Calculate SE (SE = (logOR - logOR95L)/1.96)
+# print("... Computing SE ...")
+# sumstats["SE"] = (sumstats["logOR"]-sumstats["logOR_95L"])/1.96
 
-## STEP 3: Grab interest columns for LDSC and rename them
-# Note: the chr and bp columns do not exist
+    # Compute Z score from OR and SE (Z = log(OR)/SE)
+# print("... Computing Z scores ...")
+# sumstats["Z"] = sumstats["logOR"]/ sumstats['SE']
+
+# print(sumstats.iloc[:2])
+
+## TEST TO SEE IF Z IS CORRECT: Calculate p-value from Z
+# sumstats["P_test"] = (1 - norm.cdf(abs(sumstats["Z"]))) * 2
+# print(sumstats[["P_VALUE", "P_test"]].iloc[:10])
+
+## STEP 2: Grab interest columns for LDSC and rename them
 print ('... Extracting interest columns ...')
-sumstats = sumstats[["Chr", "Pos", "rsid", "EA", "NEA", "Pvalue", "N_total", "Z"]]
+sumstats = sumstats[["SNP", "RISK_ALLELE", "OTHER_ALLELE", "P_VALUE", "N_TOTAL", "OR"]]
 
+# STEP 3: Rename columns so LDSC can understand the input
 print('... Renaming columns ....')
-sumstats.columns=["CHR", "POS", "SNP", "A1", "A2", "PVAL", "N", "Z"]
+sumstats.columns=["SNP", "A1", "A2", "PVAL", "N", "OR"]
 
 # Save as csv separated by tab to output directory
 sumstats.to_csv(f'{OutputDir}/{PhenName}-formatted.gz', index=None, compression='gzip', sep='\t')

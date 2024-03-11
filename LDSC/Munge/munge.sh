@@ -33,10 +33,13 @@ NAME=$(echo $INPUT_FILE | cut -d "/" -f10 | cut -d "-" -f1)
 
 echo "Name is $NAME"
 
+# BEFORE MUNGE: Compare alleles to reference SNP panel
+
 # Run munge python script (implemented in the ldsc module)
 munge_sumstats.py --sumstats ${INPUT_FILE} \
                   --out ${MUNGE_OUTPUT_DIR}/${NAME} \
-                  --merge-alleles ${MUNGE_ALLELES_FILE}
+                  --merge-alleles ${MUNGE_ALLELES_FILE} \
+                  --a1-inc # THIS IS ONLY IN T2D
 
 echo "...................... Python munge done!"
 

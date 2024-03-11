@@ -2,7 +2,7 @@
 
 #SBATCH -p normal # partition (queue)
 #SBATCH -N 1 # number of nodes
-#SBATCH -J FormatLDSC
+#SBATCH -J FormatUKBB
 #SBATCH --mem 60G # memory pool for all cores
 ##SBATCH -t 0-02:00 # time (D-HH:MM)
 #SBATCH -o ./log.%j.out # STDOUT
@@ -25,7 +25,7 @@ NAME=$(echo $INPUT_FILE | cut -d '/' -f11 | cut -d '.' -f1)
 echo "file number is $SLURM_ARRAY_TASK_ID"
 echo "input file is $INPUT_FILE, and its name is $NAME"
 
-python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/format/LDSC/LDSC_format.py \
+python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/format/traits/formatUKBB.py \
     ${INPUT_FILE} \
     ${NAME} \
     ${FORMATTED_OUTPUT_DIR}

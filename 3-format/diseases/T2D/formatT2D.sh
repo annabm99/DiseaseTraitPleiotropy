@@ -16,11 +16,9 @@ module load Python/3.6.6-foss-2018b
 
 # Load input variables
 SUMSTATS_T2D=$1
-VARIANTS=$2
-OUTPUT_DIR=$3
+OUTPUT_DIR=$2
 
 # Run Python
 python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/format/diseases/T2D/formatT2D.py \
     ${SUMSTATS_T2D} \
-    ${VARIANTS} \
     ${OUTPUT_DIR}

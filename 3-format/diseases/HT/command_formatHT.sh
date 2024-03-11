@@ -2,7 +2,7 @@
 
 # Load files
 SUMSTATS_HT=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/diseases/1-download/HT_d.txt
-FORMATTED_OUTPUT_DIR=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/diseases/2-format/outputs
+FORMATTED_OUTPUT_DIR=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/diseases/2-format
 
 echo "FILE LOADED"
 echo "SUMSTATS LIST IS: $SUMSTATS_HT"

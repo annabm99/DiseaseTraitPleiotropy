@@ -29,6 +29,5 @@ echo 'Computing heritability with LDSC'
 ldsc.py --h2 ${INPUT_FILE} \
         --ref-ld-chr ${EUR_REFERENCE} \
         --w-ld-chr ${EUR_REFERENCE} \
-        --out ${LDSC_OUTPUT_DIR}/${NAME} \
-
+        --out ${LDSC_OUTPUT_DIR}/${NAME}
 conda deactivate
