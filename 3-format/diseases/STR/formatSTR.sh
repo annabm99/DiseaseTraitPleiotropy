@@ -16,9 +16,13 @@ module load Python/3.6.6-foss-2018b
 
 # Load input variables
 SUMSTATS_STR=$1
-OUTPUT_DIR=$2
+REF_SNSP=$2
+OUTPUT_DIR=$3
+
+echo "SUMSTATS IS: $SUMSTATS_STR, REFERENCE IS: $REF_SNPS, OUTPUT DIR IS: $OUTPUT_DIR"
 
 # Run Python
 python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/format/diseases/STR/formatSTR.py \
     ${SUMSTATS_STR} \
+    ${REF_SNPS} \
     ${OUTPUT_DIR}

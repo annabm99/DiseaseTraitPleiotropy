@@ -6,7 +6,8 @@ import sys
 import pandas as pd
 
 InputPath = sys.argv[1].rstrip()
-OutputDir = sys.argv[2].rstrip()
+RefPath = sys.argv[2].rstrip()
+OutputDir = sys.argv[3].rstrip()
 
 N = 446696 # total N of the experiment
 
@@ -18,6 +19,7 @@ PhenName = FileName.split(".")[0] # First part of the file name
 print ("File name: " + FileName + "\nPhenotype: " + PhenName)
 
 sumstats = pd.read_csv(InputPath, sep=" ", index_col=False, error_bad_lines=False, low_memory=False)
+ref = pd.read_csv(RefPath, sep=" ", index_col=False, error_bad_lines=False, low_memory=False)
 
 print(f"Original columns: \n {sumstats.iloc[:2]}")
 
@@ -25,13 +27,18 @@ print(f"Original columns: \n {sumstats.iloc[:2]}")
 print("... Adding N_total column ...")
 sumstats["N_total"] = N
 
-## STEP 2: Grab interest columns for LDSC and rename them
-print ('... Extracting interest columns ...')
-sumstats = sumstats[["MarkerName", "Allele1", "Allele2", "P-value", "N_total", "Effect", "StdErr"]]
+## STEP 2: Merge with reference file with CHR and BP positions (from the rs column)
+print ("... Merging through rsid column ...")
+sumstats.rename(columns={'MarkerName': 'rsid'}, inplace=True)
+sumstats= sumstats.merge(ref, on='rsid')
 
-# STEP 3: Rename columns so LDSC can understand the input
+## STEP 3: Grab interest columns for LDSC and rename them
+print ('... Extracting interest columns ...')
+sumstats = sumstats[["chr", "pos", "rsid", "Allele1", "Allele2", "P-value", "N_total", "Effect", "StdErr"]]
+
+# STEP 4: Rename columns so LDSC can understand the input
 print('... Renaming columns ....')
-sumstats.columns=["SNP", "A1", "A2", "PVAL", "N", "EFFECT", "SE_EFFECT"]
+sumstats.columns=["CHR", "BP", "SNP", "A1", "A2", "PVAL", "N", "BETA", "SE"]
 
 # Save as csv separated by tab to output directory
 sumstats.to_csv(f'{OutputDir}/{PhenName}-formatted.gz', index=None, compression='gzip', sep='\t')

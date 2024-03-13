@@ -12,6 +12,6 @@ JOBS_COUNT=$(cat ${SUMSTATS_LIST} | wc -l)
 
 echo "There are a total of $JOBS_COUNT jobs to run"
 
-echo '##### FORMATTING UKBB FOR LDSC TO MUNGE #####'
+echo '##### FORMATTING UKBB FOR PLEIOFDR #####'
 sbatch --array=1-${JOBS_COUNT} /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/format/traits/formatUKBB.sh ${SUMSTATS_LIST} \
                                                           ${FORMATTED_OUTPUT_DIR} 

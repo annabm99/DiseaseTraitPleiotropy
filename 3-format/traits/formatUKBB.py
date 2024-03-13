@@ -13,23 +13,17 @@ SumStats = pd.read_csv(InputFile, sep='\t', index_col=False, compression="gzip",
 print(SumStats.iloc[:2])
 print(SumStats[["beta"]].iloc[:2])
 
-# STEP 1: Invert sign for BETA because Neale Lab calculates it based on the alternative allele
-#sumstats["beta"] = pd.to_numeric(sumstats["beta"], errors="coerce") # Convert to numeric
-#sumstats[["beta"]]=sumstats[["beta"]].mul(-1) # Multiply by -1
-
-#print(sumstats[["beta"]].iloc[:2])
-
 # STEP 1: Grab interest columns for LDSC
 print ('... Extracting interest columns ...')
-SumStats = SumStats[["rsid", "ref", "alt", "n_complete_samples", "pval", "beta", "se"]]
+SumStats = SumStats[["chr", "pos", "rsid", "ref", "alt", "n_complete_samples", "pval", "beta", "se", "info"]]
 
 print(SumStats.iloc[:2])
 
 # STEP 2: Rename columns so LDSC can understand the input
 print('... Renaming columns ....')
 
-SumStats.columns=["ID", "A1", "A2", "N",  "PVAL", "BETA", "SE"]
+SumStats.columns=["CHR", "BP", "SNP", "A1", "A2", "N",  "PVAL", "BETA", "SE", "INFO"]
 
 print(SumStats.iloc[:2])
 
-SumStats.to_csv(f'{OutputDir}/{Name}-formatted.gz', index=None, compression='gzip', sep='\t')
+SumStats.to_csv("{}/{}-formatted.gz".format(OutputDir, Name), index=None, compression='gzip', sep='\t')

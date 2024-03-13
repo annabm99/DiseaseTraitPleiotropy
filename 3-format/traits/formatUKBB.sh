@@ -10,7 +10,7 @@
 #SBATCH --mail-type=END,FAIL # notifications for job done & fail
 #SBATCH --mail-user=anna.basquet01@estudiant.upf.edu # send-to address
 
-echo "____ LDSC_FORMAT.SH RUNNING ____"
+echo "____ FORMAT.SH RUNNING ____"
 
 module load Python/3.6.6-foss-2018b
 

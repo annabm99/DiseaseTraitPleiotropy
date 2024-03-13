@@ -60,11 +60,11 @@ sumstats[["N_TOTAL"]] = sumstats["N_CASES"] + sumstats["N_CONTROLS"]
 
 ## STEP 2: Grab interest columns for LDSC and rename them
 print ('... Extracting interest columns ...')
-sumstats = sumstats[["SNP", "RISK_ALLELE", "OTHER_ALLELE", "P_VALUE", "N_TOTAL", "OR"]]
+sumstats = sumstats[["CHROMOSOME", "POSITION", "SNP", "RISK_ALLELE", "OTHER_ALLELE", "P_VALUE", "N_TOTAL", "OR", "OR_95L", "OR_95U"]]
 
 # STEP 3: Rename columns so LDSC can understand the input
 print('... Renaming columns ....')
-sumstats.columns=["SNP", "A1", "A2", "PVAL", "N", "OR"]
+sumstats.columns=["CHR", "BP", "SNP", "A1", "A2", "PVAL", "N", "OR", "ORL95", "ORU95"]
 
 # Save as csv separated by tab to output directory
 sumstats.to_csv(f'{OutputDir}/{PhenName}-formatted.gz', index=None, compression='gzip', sep='\t')

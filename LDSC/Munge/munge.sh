@@ -4,7 +4,7 @@
 #SBATCH -N 1 # number of nodes
 #SBATCH -J MungeSumStats
 #SBATCH --mem 60G # memory pool for all cores
-##SBATCH -t 0-01:30 # time (D-HH:MM)
+##SBATCH -t 1-00:00 # time (D-HH:MM)
 #SBATCH -o ./log.%j.out # STDOUT
 #SBATCH -e ./log.%j.err # STDERR
 #SBATCH --mail-type=END,FAIL # notifications for job done & fail
@@ -12,13 +12,11 @@
 
 echo "_____ MUNGE.SH _____"
 
-module load ldsc/v1.0.1-Miniconda2-4.6.14
-source activate ldsc
-
 # Load variables
 FORMAT_SUMSTATS_LIST=$1
 MUNGE_ALLELES_FILE=$2
-MUNGE_OUTPUT_DIR=$3
+COMPARE_DIR=$3
+MUNGE_OUTPUT_DIR=$4
 
 echo "variables loaded"
 
@@ -29,23 +27,25 @@ echo "file number is $SLURM_ARRAY_TASK_ID"
 echo "input file is $INPUT_FILE"
 
 # Grab phenotype name
-NAME=$(echo $INPUT_FILE | cut -d "/" -f10 | cut -d "-" -f1)
+PHEN_NAME=$(echo $INPUT_FILE | cut -d "/" -f11 | cut -d "-" -f1)
+echo "Name is $PHEN_NAME"
 
-echo "Name is $NAME"
+echo "Reference file is $MUNGE_ALLELES_FILE"
+echo "Compare dir is $COMPARE_DIR"
 
-# BEFORE MUNGE: Compare alleles to reference SNP panel
+# Activate LDSC module
+module load ldsc/v1.0.1-Miniconda2-4.6.14
+source activate ldsc
 
 # Run munge python script (implemented in the ldsc module)
-munge_sumstats.py --sumstats ${INPUT_FILE} \
-                  --out ${MUNGE_OUTPUT_DIR}/${NAME} \
+munge_sumstats.py --sumstats ${COMPARED_FILE} \
+                  --out ${MUNGE_OUTPUT_DIR}/${PHEN_NAME} \
                   --merge-alleles ${MUNGE_ALLELES_FILE} \
-                  --a1-inc # THIS IS ONLY IN T2D
-
+                #   --a1-inc # THIS IS ONLY IN T2D
 echo "...................... Python munge done!"
 
-echo "Renaming output.. "
-
-mv ${MUNGE_OUTPUT_DIR}/${NAME}.sumstats.gz ${MUNGE_OUTPUT_DIR}/${NAME}-munge.gz
+# Rename the munge file
+echo "Renaming output... "
+mv ${MUNGE_OUTPUT_DIR}/${PHEN_NAME}.sumstats.gz ${MUNGE_OUTPUT_DIR}/${PHEN_NAME}-munge.gz
 
 conda deactivate
-#munge.sh (END)

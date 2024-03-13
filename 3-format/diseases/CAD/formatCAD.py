@@ -32,13 +32,13 @@ print(sumstats.iloc[:2])
 
 # STEP 2: Grab interest columns for LDSC
 print ('... Extracting interest columns ...')
-sumstats = sumstats[["SNP", "reference_allele", "other_allele", "pvalue", "N_total", "log_odds", "log_odds_se"]]
+sumstats = sumstats[["chr_pos_(b36)", "SNP", "reference_allele", "other_allele", "pvalue", "N_total", "log_odds", "log_odds_se"]]
 
 print(sumstats.iloc[:2])
 
 # STEP 3: Rename columns so LDSC can understand the input
 print('... Renaming columns ....')
-sumstats.columns=["SNP", "A1", "A2", "PVAL", "N", "logOR", "SE_logOR"]
+sumstats.columns=["CHRPOS", "SNP", "A1", "A2", "PVAL", "N", "logOR", "SE"]
 
 print(sumstats.iloc[:2])
 
