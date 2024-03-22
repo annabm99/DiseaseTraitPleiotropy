@@ -9,37 +9,68 @@
 #SBATCH --mail-type=END,FAIL # notifications for job done & fail
 #SBATCH --mail-user=anna.basquet01@estudiant.upf.edu # send-to address
 
+# Usage function
+usage() {
+    echo "Usage: $0 <sumstats_list> <output_dir>"
+    echo "   <sumstats_list>: Path to the list of input files"
+    echo "   <output_dir>: Path to the output directory"
+    exit 1
+}
+
 echo "_____ PLEIOFDRCONVERT.SH _____"
+
+# Increase RAM memory
+interactive -m 20
 
 # Load Python module (has to be between 2.7 and 3)
 module load Python/2.7.11-foss-2016b
 
-# Load variables
+# Check the number of arguments
+if [ "$#" -ne 2 ]; then
+    echo "Error: Invalid number of arguments."
+    usage
+fi
+
 SUMSTATS_LIST=$1
 OUTPUT_DIR=$2
-echo "variables loaded"
+
+# Check if input file exists
+if [ ! -f "$SUMSTATS_LIST" ]; then
+    echo "Error: Input file list '$SUMSTATS_LIST' not found."
+    exit 1
+fi
+
+# Check if output directory exists, if not create it
+if [ ! -d "$OUTPUT_DIR" ]; then
+    echo "Creating output directory: $OUTPUT_DIR"
+    mkdir -p "$OUTPUT_DIR" || { echo "Error: Failed to create output directory."; exit 1; }
+fi
+
+echo "... Variables loaded ..."
 
 # Grab one file from path list
 INPUT_PATH=$(cat ${SUMSTATS_LIST} | sed -n ${SLURM_ARRAY_TASK_ID}p)
 
-echo "file number is $SLURM_ARRAY_TASK_ID"
-echo "input file is $INPUT_PATH"
+# Check if the file exists
+if [ ! -f "$INPUT_PATH" ]; then
+        echo "Warning: Input file '$INPUT_PATH' not found. Skipping..."
+        continue
+else
+        echo "File number is $SLURM_ARRAY_TASK_ID, input file is $INPUT_PATH"
+fi
 
 # Grab phenotype name
-PHEN_NAME=$(echo $INPUT_PATH | cut -d "/" -f11 | cut -d "-" -f1)
-echo "Name is $PHEN_NAME"
+PHEN_NAME=$(basename "$INPUT_PATH" | cut -d "-" -f1)
+echo "Phenotype name: $PHEN_NAME"
 
 # Read the first line (header) of the file
 header=$(gunzip -c $INPUT_PATH | head -n 1)
-echo $header
+echo "Original header: $header"
 
-# Check if the header contains "ID" or "SNP"
-if [[ "$header" == *"ID"* ]]; then
-        id_name="ID"
-elif [[ "$header" == *"SNP"* ]]; then
-        id_name="SNP"
-else
-    echo "Neither 'ID' nor 'SNP' found in the column names"
+# Check if the header contains "SNP"
+if [[ "$header" != *"SNP"* ]]; then
+        echo "Error: 'SNP' not found in the column names, rsid column has to have the name SNP."
+        continue
 fi
 
 # Cheack if the header contains BETA, OR, logOR or EFFECT
@@ -52,98 +83,92 @@ elif [[ "$header" == *"OR"* ]]; then
 elif [[ "$header" == *"EFFECT"* ]]; then
         effect_name="EFFECT"
 else
-    echo "No effect column was found"
+        echo "Error: No effect column was found."
+        exit 1
 fi
 
 # Cheack if the header contains SE, SE_BETA or SE_logOR
 if [[ "$header" == *"SE_BETA"* ]]; then
         se_name="SE_BETA"
-elif [[ "$header" == *"SE_logOR"* ]]; then
-        se_name="SE_logOR"
+elif [[ "$header" == *"LOGODDS"* ]]; then
+        se_name="LOGODDS"
 elif [[ "$header" == *"SE"* ]]; then
         se_name="SE"
 else
-    echo "No SE column was found"
+        echo "Error: No standard error column was found."
+        continue
 fi
 
 # Step 1: Grab SNPs only in the reference dataset
 echo "... Filtering for SNPs in the reference dataset ..."
-python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py rs \
-        --sumstats $INPUT_PATH \
-        --ref /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/RefFiles/9545380.ref \
-        --out $OUTPUT_DIR/$PHEN_NAME-filt.csv \
-        --force
+python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/compare_w_ref.py \
+        ${INPUT_PATH} \
+        ${OUTPUT_DIR} \
+        ${PHEN_NAME}-filt.csv.gz
 
-FILT_FILE=$OUTPUT_DIR/$PHEN_NAME-filt.csv
+FILT_FILE=$OUTPUT_DIR/$PHEN_NAME-filt.csv.gz
 echo "Filtered file: $FILT_FILE"
 
 # Step 2: Run PleioFDR formatter to convert to csv PleioFDR format
-echo "... Starting conversion to csv ..."
-# The arguments passed to pleioFDR convert will depend on the effect column of the given input file
+
+# Effect column mappings
+declare -A effect_mappings=(
+    ["BETA"]="--se $se_name --beta $effect_name"
+    ["OR"]="--se $se_name --or $effect_name"
+    ["logOR"]="--se $se_name --logodds $effect_name"
+)
+
+# Check if the phenotype is T2D_d, because it is handled different (has no SE)
 if [[ $PHEN_NAME == "T2D_d" ]]; then
-        python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py csv \
-                --auto \
-                --sumstats $FILT_FILE \
-                --out $OUTPUT_DIR/$PHEN_NAME.csv \
-                --or $effect_name \
-                --oru95 ORU95 \
-                --orl95 ORL95 \
-                --snp $id_name \
-                --force
-
-elif [[ "$effect_name" == "BETA" ]]; then
-        python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py csv \
-                --auto \
-                --sumstats $FILT_FILE \
-                --out $OUTPUT_DIR/$PHEN_NAME.csv \
-                --se $se_name \
-                --snp $id_name \
-                --beta $effect_name \
-                --force
-
-elif [[ "$effect_name" == "OR" ]]; then
-        python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py csv \
-                --auto \
-                --sumstats $FILT_FILE \
-                --out $OUTPUT_DIR/$PHEN_NAME.csv \
-                --se $se_name \
-                --snp $id_name \
-                --or $effect_name \
-                --force
-
-elif [[ "$effect_name" == "logOR" ]]; then
-        python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py csv \
-                --auto \
-                --sumstats $FILT_FILE \
-                --out $OUTPUT_DIR/$PHEN_NAME.csv \
-                --se $se_name \
-                --snp $id_name \
-                --logodds $effect_name \
-                --force
+    effect_arg="--or $effect_name --oru95 ORU95 --orl95 ORL95"
+elif [[ $PHEN_NAME == "CAD_d" ]]; then
+    effect_arg="$effect_mappings[$effect_name] --chrpos CHRPOS"
+else
+    # Retrieve the effect argument based on the effect name
+    effect_arg="$effect_mappings[$effect_name]"
 fi
-echo "CSV convert done"
 
+echo "The arguments to python convert will be: $effect_arg"
+
+# Check if the effect argument is defined
+if [[ -n "$effect_arg" ]]; then
+    # Run PleioFDR formatter with the retrieved effect argument
+    echo "... Starting conversion to csv ..."
+
+    python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py csv \
+        --auto \
+        --sumstats "$FILT_FILE" \
+        --out "$OUTPUT_DIR/$PHEN_NAME.csv" \
+        --snp "$id_name" \
+        $effect_arg \
+        --force
+else
+        echo "ERROR: Arguments for pleioconvert could not be set successfully."
+        exit 1
+fi
+
+echo "CSV convert done"
 CSV_FILE=$OUTPUT_DIR/$PHEN_NAME.csv
 echo "Output file: $CSV_FILE"
 
 # Step 3: Calculate z-score
+
+# Check if the phenotype is T2D_d, it needs an extra argument
+if [[ $PHEN_NAME == "T2D_d" ]]; then
+    effect_arg="--a1-inc"
+else
+    effect_arg=""
+fi
+
 echo "... Starting to calculate Z scores ..."
 python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py zscore \
         --sumstats $CSV_FILE \
         --out $OUTPUT_DIR/$PHEN_NAME-zscore.csv \
         --effect $effect_name \
+        $effect_arg \
         --force
+
 echo "Z-score calculation done"
 
 ZSCORE_FILE=$OUTPUT_DIR/$PHEN_NAME-zscore.csv
-echo "Output file: $SZCORE_FILE"
-
-# Step 4: Run PleioFDR formatter to convert to mat format
-echo "... Starting conversion to mat ..."
-python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py mat \
-        --sumstats $ZSCORE_FILE \
-        --ref /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/RefFiles/9545380.ref \
-        --out $OUTPUT_DIR/$PHEN_NAME.mat \
-        --force
-
-echo "Output file: $OUTPUT_DIR/$PHEN_NAME.mat"
+echo "Output file: $ZSCORE_FILE"

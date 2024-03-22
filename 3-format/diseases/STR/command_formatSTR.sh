@@ -2,10 +2,10 @@
 
 # Load files
 SUMSTATS_STR=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/diseases/1-download/STR_d.out
-FORMATTED_OUTPUT_DIR=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/diseases/2-format
+FORMATTED_OUTPUT_DIR=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/diseases/2-format/outputs
 REF_SNPS=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/traits/1-download/merge/inputs/variants-short.tsv.gz
 
-echo "FILE LOADED"
+echo "FILES LOADED"
 echo "SUMSTATS LIST IS: $SUMSTATS_STR"
 echo "REFERENCE IS: $REF_SNPS"
 

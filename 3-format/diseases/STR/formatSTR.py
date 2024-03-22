@@ -19,7 +19,7 @@ PhenName = FileName.split(".")[0] # First part of the file name
 print ("File name: " + FileName + "\nPhenotype: " + PhenName)
 
 sumstats = pd.read_csv(InputPath, sep=" ", index_col=False, error_bad_lines=False, low_memory=False)
-ref = pd.read_csv(RefPath, sep=" ", index_col=False, error_bad_lines=False, low_memory=False)
+ref = pd.read_csv(RefPath, sep="\t", index_col=False, error_bad_lines=False, low_memory=False)
 
 print(f"Original columns: \n {sumstats.iloc[:2]}")
 
@@ -30,7 +30,7 @@ sumstats["N_total"] = N
 ## STEP 2: Merge with reference file with CHR and BP positions (from the rs column)
 print ("... Merging through rsid column ...")
 sumstats.rename(columns={'MarkerName': 'rsid'}, inplace=True)
-sumstats= sumstats.merge(ref, on='rsid')
+sumstats=sumstats.merge(ref, on='rsid')
 
 ## STEP 3: Grab interest columns for LDSC and rename them
 print ('... Extracting interest columns ...')

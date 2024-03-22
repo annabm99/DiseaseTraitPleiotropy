@@ -16,7 +16,7 @@ module load Python/3.6.6-foss-2018b
 
 # Load input variables
 SUMSTATS_STR=$1
-REF_SNSP=$2
+REF_SNPS=$2
 OUTPUT_DIR=$3
 
 echo "SUMSTATS IS: $SUMSTATS_STR, REFERENCE IS: $REF_SNPS, OUTPUT DIR IS: $OUTPUT_DIR"
