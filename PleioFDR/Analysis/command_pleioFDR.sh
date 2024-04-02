@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load summary statistics list
-SUMSTAT_PAIRS_LIST=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/2-Analysis/non-correlated/pairs_list.txt # Disease and trait sumstats
+SUMSTAT_PAIRS_LIST=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/2-Analysis/dis-trait/pairs_list.txt # Disease and trait sumstats
 
 echo "FILE LOADED"
 echo "SUMSTATS LIST IS: $SUMSTAT_PAIRS_LIST"

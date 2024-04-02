@@ -51,7 +51,7 @@ FileName2 = os.path.basename(File2)
 # Execute modifyer function
 try:
     modify_template(
-        ref_file="/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/RefFiles/ref9545380_1kgPhase3eur_LDr2p1.mat",
+        ref_file="/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/RefFiles/ref9545380_1kgPhase3eur_LDr2p1.mat",
         file1=FileName1,
         file2=FileName2,
         phen1=Phen1,
