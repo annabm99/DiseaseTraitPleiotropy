@@ -1,4 +1,0 @@
-
-
-
-Rscript example.R
