@@ -33,10 +33,9 @@ try:
     print("Multiplying z-score columns...")
     df['Z_PROD'] = df[f'ZSCORE_{phen1}'] * df[f'ZSCORE_{phen2}']
 
-    # Count positive and negative results
-    print("Counting positive and negative pleiotropies...")
-    positive_count = (df['Z_PROD'] > 0).sum() # CHANGE THIS WHEN THE DATASETS ARE CORRECTED!!!
-    negative_count = (df['Z_PROD'] < 0).sum() # CHANGE THIS WHEN THE DATASETS ARE CORRECTED!!!
+    # Separate the DataFrame into two DataFrames
+    df_positive = df[df['col'] < 0]
+    df_negative = df[df['col'] > 0]
 
     # Write report
     print("Writing report...")

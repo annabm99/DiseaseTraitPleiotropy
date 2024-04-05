@@ -21,9 +21,11 @@ CORR_OUTPUT_DIR=$3 # output directory
 
 INPUT_PAIR=$(cat ${TRAIT_PAIRS} | sed -n ${SLURM_ARRAY_TASK_ID}p)
 
-PHEN1=$(echo $INPUT_PAIR | cut -d '/' -f12 | cut -d '-' -f1)
+read PATH1 PATH2 <<< $(echo $INPUT_PAIR | cut -d ',' -f1,2)
+
+PHEN1=$( basename $PATH1 | cut -d '-' -f1)
 echo "Phenotype 1 is $PHEN1"
-PHEN2=$(echo $INPUT_PAIR | cut -d ',' -f2 | cut -d '/' -f12 | cut -d '-' -f1)
+PHEN2=$( basename $PATH2 | cut -d '-' -f1)
 echo "Phenotype 2 is $PHEN2"
 
 ldsc.py --ref-ld-chr ${EUR_REFERENCE} \

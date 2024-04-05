@@ -31,8 +31,20 @@ except Exception as e:
 # Remove empty columns from the conjfdr dataframe
 df = df.drop(['snpid', 'geneid', 'A1', 'A2'], axis=1)
 
+# Get the phenotype codes
+file = os.path.basename(PleiofdrFilePath)
+parts = file.split("_")
+phen1, phen2 = [part for part in parts if any(c.isupper() for c in part)]
+
+# Check if phen1 and phen2 were retrieved correctly
+if not phen1 or not phen2:
+    print ("Could not find phenotype codes in the file name.")
+    sys.exit(1)
+
+print(f'First phenotype: {phen1}, Second phenotype: {phen2}')
+
 # Change column names
-df.columns=('NUM', 'CHR', 'BP', 'ZSCORE_CAD', 'ZSCORE_BMI', 'CONJFDR', 'PRUNE', 'MIN_CONJFDR', 'PVAL_CAD', 'PVAL_BMI', )
+df.columns=('NUM', 'CHR', 'BP', f'ZSCORE_{phen1}', f'ZSCORE_{phen2}', 'CONJFDR', 'PRUNE', 'MIN_CONJFDR', f'PVAL_{phen1}', f'PVAL_{phen2}', )
 
 # Merge the data with the reference file
 print("Merging with reference...")

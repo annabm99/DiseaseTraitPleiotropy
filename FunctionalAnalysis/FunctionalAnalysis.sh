@@ -11,10 +11,8 @@
 module load Python/3.6.6-foss-2018b
 
 # Import arguments
-PLEIOTROPIES_LIST=$1
-OUT_DIR=$2
-
-PLEIOTROPIES_FILE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$PLEIOTROPIES_LIST")
+PLEIOTROPIES_FILE=
+OUT_DIR=
 
 
 echo "File: $PLEIOTROPIES_FILE"
