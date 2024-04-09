@@ -14,14 +14,19 @@
 module load ldsc/v1.0.1-Miniconda2-4.6.14
 source activate ldsc
 
-# Config
+# Import variables
 TRAIT_PAIRS=$1 # list with all trait pairs combinations (pathtrait1,pathtrait2)
 EUR_REFERENCE=$2 # directory with european reference LD score
 CORR_OUTPUT_DIR=$3 # output directory
 
 INPUT_PAIR=$(cat ${TRAIT_PAIRS} | sed -n ${SLURM_ARRAY_TASK_ID}p)
 
-read PATH1 PATH2 <<< $(echo $INPUT_PAIR | cut -d ',' -f1,2)
+echo "Input pair is $INPUT_PAIR"
+
+IFS=',' read -r PATH1 PATH2 <<< "$INPUT_PAIR"
+
+echo "PATH1: $PATH1"
+echo "PATH2: $PATH2"
 
 PHEN1=$( basename $PATH1 | cut -d '-' -f1)
 echo "Phenotype 1 is $PHEN1"

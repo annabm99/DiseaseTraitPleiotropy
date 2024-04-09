@@ -10,7 +10,7 @@ if len(sys.argv) != 4:
 
 # Import variables
 InputFile = sys.argv[1].rstrip()
-RefFile = "/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/RefFiles/9545380.ref"
+RefFile = "/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/RefFiles/9545380.ref"
 OutputDir = sys.argv[2].rstrip()
 OutputFmt = sys.argv[3].rstrip()
 

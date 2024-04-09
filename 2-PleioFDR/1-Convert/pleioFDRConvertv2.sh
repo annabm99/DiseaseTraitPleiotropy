@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+#SBATCH -p normal # partition (queue)
+#SBATCH -N 1 # number of nodes
+#SBATCH -J rev_ConvertPleioFDR
+#SBATCH -t 0-05:00 # time (D-HH:MM)
+#SBATCH -o log.%j.out # STDOUT
+#SBATCH -e log.%j.err # STDERR
+#SBATCH --mail-type=END,FAIL # notifications for job done & fail
+#SBATCH --mail-user=anna.basquet01@estudiant.upf.edu # send-to address
 
 # Print usage message if not enough arguments are provided
 if [ "$#" -ne 2 ]; then
@@ -7,9 +16,6 @@ if [ "$#" -ne 2 ]; then
 fi
 
 echo "_____ PLEIOFDRCONVERT.SH _____"
-
-# Increase RAM memory
-interactive -m 20 || { echo "Unable to increase RAM memory"; exit 1; }
 
 # Load Python module (has to be between 2.7 and 3)
 module load Python/2.7.11-foss-2016b || { echo "Unable to load Python module"; exit 1; }
@@ -82,7 +88,7 @@ fi
 
 # Step 1: Filter for SNPs in the reference dataset
 echo "... Filtering for SNPs in the reference dataset ..."
-python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/compare_w_ref.py \
+python ./compare_w_ref.py \
         "$INPUT_PATH" \
         "$OUTPUT_DIR" \
         "${PHEN_NAME}-filt.csv.gz" || { echo "Filtering failed"; exit 1; }
@@ -118,7 +124,7 @@ case "$PHEN_NAME" in
 esac
 
 # Run the conversion command
-python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py csv \
+python ./python_convert/sumstats.py csv \
         --sumstats "$FILT_FILE" \
         --out "$OUTPUT_DIR/$PHEN_NAME.csv" \
         --snp "$id_name" \
@@ -139,7 +145,7 @@ if [[ "$PHEN_NAME" == "T2D_d" ]]; then
 fi
 
 # Run the z-score calculation command
-python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/1-Convert/python_convert/sumstats.py zscore \
+python ./python_convert/sumstats.py zscore \
         --sumstats "$CSV_FILE" \
         --out "$OUTPUT_DIR/$PHEN_NAME-zscore.csv" \
         --effect "$effect_name" \

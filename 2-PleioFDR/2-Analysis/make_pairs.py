@@ -83,38 +83,34 @@ def save_list_to_file(lst, out_dir):
     
 # List of diseases and traits
 disease_list = ['HT_d', 'T2D_d', 'CAD_d', 'STR_d']
-trait_list = ['AI_t_b', 'BMI_t_b', 'DBP_t_b', 'FG_t_b', 'HDL_t_b', 'LDL_t_b', 'SBP_t_b', 'TGL_t_b', 'WC_t_b']
+trait_list = ['AI_t', 'BMI_t', 'DBP_t', 'FG_t', 'HDL_t', 'LDL_t', 'SBP_t', 'TGL_t', 'WC_t']
 
 # Non-correlated pairs
-non_correlated_pairs = ['LDL_t_b,FG_t_b', 'LDL_t_b,AI_t_b', 'LDL_t_b,CAD_d']
+non_correlated_pairs = ['LDL_t,FG_t_b', 'LDL_t,AI_t_b', 'LDL_t,CAD_d']
 
 # Directory paths
-InputDir = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/1-Convert/outputs'
-OutDir_disdis = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/2-Analysis/dis-dis'
-OutDir_distrait = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/2-Analysis/dis-trait'
-OutDir_traittrait = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/2-Analysis/trait-trait'
-OutDir_noncorr = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/pleiotropy/2-PleioFDR/2-Analysis/non-correlated'
+InputDir = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/1-Convert/outputs'
+OutDir_disdis = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/2-Analysis/dis-dis'
+OutDir_distrait = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/2-Analysis/dis-trait'
+OutDir_noncorr = '/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/2-Analysis/non-correlated'
 
 # Create output directories if they don't exist
 try:
     os.makedirs(OutDir_disdis, exist_ok=True)
     os.makedirs(OutDir_distrait, exist_ok=True)
-    os.makedirs(OutDir_traittrait, exist_ok=True)
     os.makedirs(OutDir_noncorr, exist_ok=True)
     print("Output directories created successfully.")
 except OSError as e:
     print(f"Error: {e.strerror}")
 
 # Create pair lists usigng the make_pairs function
-trait_trait_pairs = make_pairs(trait_list, trait_list, InputDir)
 disease_trait_pairs = make_pairs(disease_list, trait_list, InputDir)
 disease_disease_pairs = make_pairs(disease_list, disease_list, InputDir)
 
 # Then remove the non-corrleated pairs to a separated list
-[trait_trait_pairs, disease_trait_pairs, disease_disease_pairs], noncorr_pairs = remove_noncorr([trait_trait_pairs, disease_trait_pairs, disease_disease_pairs], non_correlated_pairs)
+[disease_trait_pairs, disease_disease_pairs], noncorr_pairs = remove_noncorr([disease_trait_pairs, disease_disease_pairs], non_correlated_pairs)
 
 # Save lists to the output directories
-save_list_to_file(trait_trait_pairs, OutDir_traittrait)
 save_list_to_file(disease_trait_pairs, OutDir_distrait)
 save_list_to_file(disease_disease_pairs, OutDir_disdis)
 save_list_to_file(noncorr_pairs, OutDir_noncorr)

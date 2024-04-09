@@ -49,7 +49,8 @@ source activate ldsc
 munge_sumstats.py --sumstats ${INPUT_FILE} \
                   --out ${MUNGE_OUTPUT_DIR}/${PHEN_NAME} \
                   --merge-alleles ${MUNGE_ALLELES_REF} \
-                #   --a1-inc # THIS IS ONLY IN T2D
+                #   --a1-inc # THIS IS ONLY IN T2D because the effect values are calculated as trait-increasing
+
 echo "Python munge done!"
 
 # Rename the munge file
