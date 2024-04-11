@@ -66,17 +66,9 @@ print("Saving the generated files...")
 
 # Save the dataframe with rsids
 try:
-    df_merge.to_csv(f'{OutDir}{out_path}-sigificant.csv', index=False, sep='\t')
+    df_merge.to_csv(f'{OutDir}{out_path}-significant.csv', index=False, sep='\t')
 except Exception as e:
     print(f"Error saving significant data: {e}")
     sys.exit(1)
 
-# Save rsid list
-try:
-    df_merge['SNP'].to_csv(f'{OutDir}{out_path}-SNPs.csv', index=False, header=False, sep='\n')
-except Exception as e:
-    print(f"Error saving SNP list: {e}")
-    sys.exit(1)
-
 print(f"Meged dataframe saved at: {os.path.join(OutDir, f'{out_path}-significant.csv')}")
-print(f"rsID list saved at: {os.path.join(OutDir, f'{out_path}-SNPs.csv')}")

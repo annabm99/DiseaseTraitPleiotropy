@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Load files
-PLEIOTROPIES_LIST=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/3-Directionality/InputList.txt
-OUT_DIR=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/3-Directionality/
+PLEIOTROPIES_LIST=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/3-Directionality/1-Report/InputList.txt # list with LD-corrected loci
+OUT_DIR=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/3-Directionality/1-Report
 
 echo "FILES LOADED"
 

@@ -35,8 +35,8 @@ try:
 
     # Count positive and negative results
     print("Counting positive and negative pleiotropies...")
-    positive_count = (df['Z_PROD'] > 0).sum() # CHANGE THIS WHEN THE DATASETS ARE CORRECTED!!!
-    negative_count = (df['Z_PROD'] < 0).sum() # CHANGE THIS WHEN THE DATASETS ARE CORRECTED!!!
+    positive_count = (df['Z_PROD'] > 0).sum()
+    negative_count = (df['Z_PROD'] < 0).sum()
 
     # Write report
     print("Writing report...")

@@ -6,17 +6,17 @@ try:
 
     # Import data
     if len(sys.argv) < 3:
-        raise ValueError("USAGE: directionality.py <FilePath> <OutDir>")
+        raise ValueError("USAGE: separate_directionality.py <FilePath> <OutDir>")
 
-    FilePath=sys.argv[1].rstrip()
-    OutDir=sys.argv[2].rstrip()
+    FilePath = sys.argv[1].rstrip()
+    OutDir = sys.argv[2].rstrip()
 
     if not os.path.exists(FilePath):
         raise FileNotFoundError(f"The file '{FilePath}' does not exist.")
     
     print("Arguments imported correctly")
 
-    df=pd.read_csv(FilePath, sep='\t')
+    df = pd.read_csv(FilePath, sep='\t')
 
     # Get Phenotype Codes
     file = os.path.basename(FilePath)
@@ -25,7 +25,7 @@ try:
 
     # Check if phen1 and phen2 were retrieved correctly
     if not phen1 or not phen2:
-        raise ValueError("Could not find phenotyp codes in the file name.")
+        raise ValueError("Could not find phenotype codes in the file name.")
 
     print(f'First phenotype: {phen1}, Second phenotype: {phen2}')
 
@@ -33,25 +33,23 @@ try:
     print("Multiplying z-score columns...")
     df['Z_PROD'] = df[f'ZSCORE_{phen1}'] * df[f'ZSCORE_{phen2}']
 
-    # Separate the DataFrame into two DataFrames
-    df_positive = df[df['col'] < 0]
-    df_negative = df[df['col'] > 0]
+    # Split dataframe based on directionality
+    positive_df = df[df['Z_PROD'] > 0]
+    negative_df = df[df['Z_PROD'] < 0]
 
-    # Write report
-    print("Writing report...")
-    report = f"Positive (synergistic) pleiotropies: {positive_count}\n"
-    report += f"Negative (antagonistic) pleiotropies: {negative_count}\n"
-    report += f"Total pleiotropies: {positive_count + negative_count}\n"
-
-    # Save report to a file in the output directory
+    # Save positive and negative datasets, in separate directories for each trait (phen2)
     out_path = os.sep.join(FilePath.split(os.sep)[-2:]) # Grab the final part of the path
     no_suffix = "-".join(out_path.split("-", 2)[:2])
-    report_path = os.path.join(OutDir, f"{no_suffix}-directionality.txt")
-    with open(report_path, "w") as report_file:
-        report_file.write(report)
-        print(f"Report written to: {report_path}")
 
-# Catch exceptions and exit with non-zero status indicating an error
+    positive_file_path = os.path.join(OutDir, f"/{phen2}/{no_suffix}-positive.csv")
+    negative_file_path = os.path.join(OutDir, f"/{phen2}/{no_suffix}-negative.csv")
+    
+    positive_df.to_csv(positive_file_path, index=False)
+    negative_df.to_csv(negative_file_path, index=False)
+    
+    print(f"Positive dataset saved to: {positive_file_path}")
+    print(f"Negative dataset saved to: {negative_file_path}")
+
 except ValueError as ve:
     print("ValueError:", ve)
     sys.exit(1)

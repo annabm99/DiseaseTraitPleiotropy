@@ -11,13 +11,13 @@
 module load Python/3.6.6-foss-2018b
 
 # Import arguments
-PLEIOTROPIES_FILE=
-OUT_DIR=
+PLEIOTROPIES_FILE=$1
+OUT_DIR=$2
 
 
 echo "File: $PLEIOTROPIES_FILE"
 echo "Output dir: $OUT_DIR"
 
-python ./directionality.py \
+python ./separate_directionality.py \
     ${PLEIOTROPIES_FILE} \
     ${OUT_DIR}

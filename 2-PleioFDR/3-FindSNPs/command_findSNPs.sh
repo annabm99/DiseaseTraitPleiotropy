@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load pleiofdr file list
-PLEIOFDR_LIST=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/3-FindSNPs/PleioFDR_list.txt # Disease and trait sumstats
+PLEIOFDR_LIST=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/3-FindSNPs/InputList.txt # Disease and trait sumstats
 REF_FILE=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/RefFiles/9545380.ref
 # Output directory
 OUTPUT_DIR=/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/3-FindSNPs/all/

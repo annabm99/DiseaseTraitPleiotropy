@@ -5,7 +5,7 @@ def modify_template(ref_file, file1, file2, phen1, phen2, pair_dir, stat_type, f
     
     try:
         # Read the template file
-        default_config="/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/2-Analysis/pleiofdr/config_template.txt"
+        default_config="/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/2-PleioFDR/2-Analysis/pleiofdr/config_template.txt"
         with open(default_config, "r") as f:
             template = f.read()
 
@@ -27,7 +27,7 @@ def modify_template(ref_file, file1, file2, phen1, phen2, pair_dir, stat_type, f
                                 .replace('${exclude_chr_pos}', exclude_chr_pos)
 
         # Write the modified content to config_pair.txt
-        outfile="/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/PleioFDR/2-Analysis/pleiofdr/config-{}_{}.txt".format(phen1, phen2)
+        outfile="/gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/2-PleioFDR/2-Analysis/pleiofdr/config-{}_{}.txt".format(phen1, phen2)
         with open(outfile, "w") as f:
             f.write(modified_config)
         print("New config file written: {}",format(outfile))

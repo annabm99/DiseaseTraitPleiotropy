@@ -54,41 +54,41 @@ echo "Created new pair directory: $PAIR_DIR"
 #                 PREPARE PAIR FILES               #
 ####################################################
 
-# Step 1: Get common SNPs between the phenotype pair
-echo "... Getting common SNPs ..."
-python ./commonSNPs.py \
-    $SUMSTATS1 \
-    $SUMSTATS2 \
-    $PHEN1 \
-    $PHEN2 \
-    $PAIR_DIR
+# # Step 1: Get common SNPs between the phenotype pair
+# echo "... Getting common SNPs ..."
+# python ./commonSNPs.py \
+#     $SUMSTATS1 \
+#     $SUMSTATS2 \
+#     $PHEN1 \
+#     $PHEN2 \
+#     $PAIR_DIR
 
-COMMON_FILE_1=$PAIR_DIR/$PHEN1-common.csv
-COMMON_FILE_2=$PAIR_DIR/$PHEN2-common.csv
-echo "Common SNPs files: $COMMON_FILE_1, $COMMON_FILE_2"
+# COMMON_FILE_1=$PAIR_DIR/$PHEN1-common.csv
+# COMMON_FILE_2=$PAIR_DIR/$PHEN2-common.csv
+# echo "Common SNPs files: $COMMON_FILE_1, $COMMON_FILE_2"
 
-echo "The two phenotypes share $(wc -l < "$COMMON_FILE_1"), $(wc -l < "$COMMON_FILE_2") total SNPs."
+# echo "The two phenotypes share $(wc -l < "$COMMON_FILE_1"), $(wc -l < "$COMMON_FILE_2") total SNPs."
 
-# Step 2: Convert both datasets to mat format with PleioFDR formatter
-echo "... Starting conversion to mat ..."
+# # Step 2: Convert both datasets to mat format with PleioFDR formatter
+# echo "... Starting conversion to mat ..."
 
-for FILE in "${COMMON_FILE_1}" "${COMMON_FILE_2}"; do
-    # Determine phenotype name
-    if [ "$FILE" == "${COMMON_FILE_1}" ]; then
-        PHEN_NAME="$PHEN1"
-    elif [ "$FILE" == "${COMMON_FILE_2}" ]; then
-        PHEN_NAME="$PHEN2"
-    else
-        echo "Invalid file: $FILE"
-        exit 1
-    fi
-    # Run python script to convert to mat format
-    python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/2-PleioFDR/1-Convert/python_convert/sumstats.py mat \
-            --sumstats "$FILE" \
-            --ref /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/RefFiles/9545380.ref \
-            --out "${PAIR_DIR}/${PHEN_NAME}.mat" \
-            --force
-done
+# for FILE in "${COMMON_FILE_1}" "${COMMON_FILE_2}"; do
+#     # Determine phenotype name
+#     if [ "$FILE" == "${COMMON_FILE_1}" ]; then
+#         PHEN_NAME="$PHEN1"
+#     elif [ "$FILE" == "${COMMON_FILE_2}" ]; then
+#         PHEN_NAME="$PHEN2"
+#     else
+#         echo "Invalid file: $FILE"
+#         exit 1
+#     fi
+#     # Run python script to convert to mat format
+#     python /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/scripts/2-PleioFDR/1-Convert/python_convert/sumstats.py mat \
+#             --sumstats "$FILE" \
+#             --ref /gpfs42/projects/lab_anavarro/disease_pleiotropies/anthropometric/anna/2-PleioFDR/RefFiles/9545380.ref \
+#             --out "${PAIR_DIR}/${PHEN_NAME}.mat" \
+#             --force
+# done
 
 MAT_FILE_1=$PAIR_DIR/$PHEN1.mat
 MAT_FILE_2=$PAIR_DIR/$PHEN2.mat
