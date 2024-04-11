@@ -38,11 +38,23 @@ try:
     negative_df = df[df['Z_PROD'] < 0]
 
     # Save positive and negative datasets, in separate directories for each trait (phen2)
-    out_path = os.sep.join(FilePath.split(os.sep)[-2:]) # Grab the final part of the path
-    no_suffix = "-".join(out_path.split("-", 2)[:2])
 
-    positive_file_path = os.path.join(OutDir, f"/{phen2}/{no_suffix}-positive.csv")
-    negative_file_path = os.path.join(OutDir, f"/{phen2}/{no_suffix}-negative.csv")
+    # Select a name for the outputs
+    out_path = os.sep.join(FilePath.split(os.sep)[-2:]) # Grab the final part of the path
+    basename = os.path.basename(FilePath)
+    prefix = basename.split("-")[0]
+
+    # Check if the output directory exists, if not create it
+    out_dir_compl = os.path.join(OutDir, phen2)
+
+    if not os.path.exists(out_dir_compl):
+        # Create the directory if it doesn't exist
+        os.makedirs(out_dir_compl)
+        print(f"Directory {out_dir_compl} created.")
+
+    # Save files to this directory
+    positive_file_path = os.path.join(out_dir_compl, f"{prefix}-positive.csv")
+    negative_file_path = os.path.join(out_dir_compl, f"{prefix}-negative.csv")
     
     positive_df.to_csv(positive_file_path, index=False)
     negative_df.to_csv(negative_file_path, index=False)

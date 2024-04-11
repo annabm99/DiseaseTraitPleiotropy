@@ -24,7 +24,7 @@ try:
     # Get the filename (last part of the path)
     # Last part of file path
     out_path = os.sep.join(InputFile.split(os.sep)[-2:]) # Grab the final part of the path
-    no_suffix = ".".join(out_path.split(".", 2)[1])
+    no_suffix = out_path.split(".")[0]
 
     # Create output file path
     outfile = os.path.join(OutDir, f"{no_suffix}IDs.txt")
